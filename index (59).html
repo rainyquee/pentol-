@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e8590c">
+<title>Antrian Pentol</title>
+<style>
+:root{--o:#e8590c;--o2:#c2410c;--g:#2f9e44;--bg:#fff7ed;--ink:#2b2118;--mut:#7a6a5c;--ln:#f0dcc8;--card:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{margin:0;font:16px/1.35 system-ui,sans-serif;background:var(--bg);color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+input,textarea{user-select:text;-webkit-user-select:text}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:3px solid #1c7ed6;outline-offset:2px}
+h3{margin:14px 0 6px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.top{background:var(--o);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
+.conn{font-size:13px;font-weight:700;white-space:nowrap}.conn.ok::before,.conn.wait::before,.conn.bad::before{content:"● "}
+.top .conn.ok{color:#d3f9d8}.top .conn.wait{color:#fff3bf}.top .conn.bad{color:#ffe3e3}
+.boot{max-width:460px;margin:0 auto;padding:24px 16px;display:flex;flex-direction:column;gap:12px}
+.boot h1{margin:0;color:var(--o2)}
+input{min-height:48px;padding:0 12px;border:2px solid var(--ln);border-radius:12px;background:#fff;width:100%}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}label.chk{flex-direction:row;align-items:center;gap:10px;font-size:16px}label.chk input{width:26px;min-height:26px}
+.mb{min-height:64px;border:0;border-radius:16px;font-size:20px;font-weight:800;background:var(--o);color:#fff}.mb.alt{background:#1c7ed6}
+.bt{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid var(--ln);background:#fff;font-weight:700}
+.bt.p{background:var(--o);border-color:var(--o);color:#fff}.bt.g{background:var(--g);border-color:var(--g);color:#fff}.bt.r{background:#fff;border-color:#e03131;color:#e03131}
+#smain{padding:10px;padding-bottom:150px}
+#t-order{display:flex;flex-direction:column;gap:6px}#ql{display:none}
+.card{background:var(--card);border:2px solid var(--ln);border-radius:16px;padding:12px}
+#cur{margin:10px 10px 0}#cur .card{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-color:var(--o)}
+.cl{font-size:12px;font-weight:800;color:var(--mut);letter-spacing:.08em}.cn{font-size:44px;font-weight:900;line-height:1;color:var(--o2)}
+.grid4{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.chip{min-height:58px;border:2px solid var(--ln);border-radius:14px;background:#fff;font-size:17px;font-weight:800;padding:4px}
+.chip.on{background:var(--o);border-color:var(--o);color:#fff}
+.total{margin-top:8px;font-size:26px;font-weight:900;color:var(--g)}
+.irow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--ln);border-radius:14px;padding:6px 10px;margin-bottom:6px}
+.irow span{flex:1;font-size:19px;font-weight:800}.irow b{min-width:34px;text-align:center;font-size:24px}
+.qb{width:58px;height:58px;border-radius:14px;border:2px solid var(--ln);background:#fff;font-size:30px;font-weight:900}.qb.p{background:var(--o);border-color:var(--o);color:#fff}
+#sum{position:fixed;left:0;right:0;bottom:60px;background:#fff;border-top:3px solid var(--o);padding:8px 12px;display:flex;align-items:center;gap:10px;z-index:15}
+#sum .sd,#sum .lnk{display:none}.sh{font-weight:900;font-size:18px}.stot{font-size:22px;font-weight:900;color:var(--g);margin-left:auto}.sc{color:var(--mut)}
+.big-btn{min-height:58px;padding:0 18px;border:0;border-radius:14px;background:var(--o);color:#fff;font-size:18px;font-weight:900}.big-btn:disabled{background:#d8c7b8}
+#tabs{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;border-top:1px solid var(--ln);display:flex;z-index:25}
+#tabs button{flex:1;border:0;background:none;font-weight:800;color:var(--mut);font-size:15px}#tabs button[aria-current=page]{color:var(--o2);box-shadow:inset 0 3px var(--o)}
+.oc{background:#fff;border:2px solid var(--ln);border-left:8px solid var(--ln);border-radius:14px;padding:10px;margin-bottom:8px}
+.oc.s-menunggu{border-left-color:#f08c00}.oc.s-diproses{border-left-color:#1c7ed6}.oc.s-siap{border-left-color:var(--g);background:#f1fbf3}
+.ocl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.code{font-size:26px;font-weight:900}.tot{margin-left:auto;font-weight:800}
+.det{margin:4px 0 8px;color:#4a3b2e}.acts{display:flex;gap:6px;flex-wrap:wrap}.acts .bt{flex:1;min-width:76px}
+.bd{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800}
+.b-menunggu{background:#fff3bf;color:#8a5a00}.b-diproses{background:#d0ebff;color:#1864ab}.b-siap{background:#d3f9d8;color:#1b6b2c}.b-selesai{background:#e9ecef;color:#495057}.b-dibatalkan{background:#ffe3e3;color:#c92a2a}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}.stats div{background:#fff;border:2px solid var(--ln);border-radius:12px;padding:8px 10px}.stats b{display:block;font-size:22px}.stats span{font-size:12px;color:var(--mut)}
+.hr{display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--ln);padding:7px 0;font-size:14px}.hr b{min-width:50px}.hr .d{flex:1;min-width:140px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:14px;z-index:60}
+.box{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:12px}.box h2{margin:0}
+#toast{position:fixed;left:50%;transform:translateX(-50%);top:62px;display:flex;flex-direction:column;gap:6px;z-index:90;width:min(92vw,420px)}
+.t{background:#2b2118;color:#fff;padding:12px 14px;border-radius:12px;font-weight:700}.t.err{background:#c92a2a}.t.ok{background:#2b8a3e}
+#disp{position:fixed;inset:0;display:flex;flex-direction:column;padding:2vh 3vw;gap:2vh;z-index:50}
+#disp.dark{background:#1a1008;color:#fff}#disp.light{background:#fff7ed;color:#2b2118}
+.dtop{display:flex;justify-content:space-between;align-items:center;font-size:clamp(18px,3.4vw,40px);font-weight:800}.dtop .conn{font-size:clamp(12px,1.6vw,20px)}
+.dark .conn.ok{color:#8ce99a}.dark .conn.wait{color:#ffe066}.dark .conn.bad{color:#ff8787}.light .conn.ok{color:#2b8a3e}.light .conn.wait{color:#b36b00}.light .conn.bad{color:#c92a2a}
+.dmain{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:var(--o);color:#fff;border-radius:3vw}
+.dlbl{font-size:clamp(24px,5vw,64px);font-weight:900;letter-spacing:.06em}.dnum{font-size:clamp(90px,28vh,360px);font-weight:900;line-height:1}.dsub{font-size:clamp(20px,3.6vw,48px);font-weight:700}
+.pop{animation:pop .4s ease-out}@keyframes pop{from{opacity:.2;transform:scale(.94)}to{opacity:1;transform:none}}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:2vw}.dl small{font-size:clamp(14px,2vw,26px);opacity:.75;font-weight:700}.codes{font-size:clamp(28px,6vh,72px);font-weight:900;display:flex;gap:2vw;flex-wrap:wrap;min-height:1.2em}
+#dmenu{position:fixed;right:12px;bottom:12px;display:flex;gap:8px;z-index:70}
+#ticket{display:none}
+@media print{@page{margin:0;size:58mm auto}body>*:not(#ticket){display:none!important}body{background:#fff}
+#ticket{display:block;width:54mm;margin:0 auto;padding:3mm 0;color:#000;font:13px/1.45 monospace}#ticket .c{text-align:center;font-weight:700}#ticket .tq{font-size:30px}}
+@media(min-width:1000px){
+#tabs{position:static;height:auto;border:0;background:none;padding:0 10px}#tabs button{flex:none;min-height:46px;padding:0 20px}#tabs [data-t=queue]{display:none}
+#smain{padding-bottom:20px}#t-order{display:grid;grid-template-columns:340px 1fr 340px;gap:14px;align-items:start}#ql{display:block}
+#sum{position:sticky;top:70px;bottom:auto;flex-direction:column;align-items:stretch;border:2px solid var(--o);border-radius:16px;gap:8px}#sum .sd,#sum .lnk{display:block}#sum .sc{display:none}.stot{margin:0;font-size:30px}.sh{font-size:22px}
+#ql{max-height:calc(100vh - 160px);overflow:auto}}
+</style>
+</head>
+<body>
+<div id="boot" class="boot" hidden>
+ <h1>🍢 Antrian Pentol</h1><p style="margin:0;color:var(--mut)">Pilih fungsi perangkat ini. Kedua HP harus memakai Queue ID yang sama.</p>
+ <label>Queue ID<input id="b-q" autocapitalize="characters" autocomplete="off"></label>
+ <div id="b-cred"><label>Supabase URL<input id="b-u" placeholder="https://xxxx.supabase.co" autocomplete="off"></label><label style="margin-top:8px">Supabase anon key<input id="b-k" autocomplete="off"></label></div>
+ <button class="mb" data-a="boot" data-v="seller">🧑‍🍳 PENJUAL</button><button class="mb alt" data-a="boot" data-v="display">📺 DISPLAY</button>
+</div>
+<div id="seller" hidden>
+ <header class="top"><b id="sname"></b><span class="conn"></span></header>
+ <div id="cur"></div>
+ <nav id="tabs" aria-label="Menu"><button data-t="order">Pesan</button><button data-t="queue">Antrian</button><button data-t="recap">Rekap</button><button data-t="set">Setelan</button></nav>
+ <main id="smain">
+  <section id="t-order"><div id="ql"></div><div id="bld"></div><aside id="sum" aria-live="polite"></aside></section>
+  <section id="t-queue" hidden></section>
+  <section id="t-recap" hidden><div class="stats" id="stats"></div><input id="srch" placeholder="Cari nomor antrian (mis. A012)" aria-label="Cari nomor antrian" style="margin-bottom:8px"><div id="hist"></div></section>
+  <section id="t-set" hidden><div class="card"><div class="form">
+   <label>Nama penjual<input id="s-name"></label><label>Queue ID<input id="s-q" autocapitalize="characters"></label>
+   <label>Prefix antrian<input id="s-prefix" maxlength="3"></label><label>Nomor awal<input id="s-start" type="number" min="1"></label>
+   <label>Harga (pisah koma, rupiah)<input id="s-prices"></label><label>Item (pisah koma)<input id="s-items"></label>
+   <label>Saus (pisah koma)<input id="s-sauce"></label><label>Kuah (pisah koma)<input id="s-kuah"></label>
+   <label class="chk"><input type="checkbox" id="s-voice"> Suara panggilan</label><label class="chk"><input type="checkbox" id="s-sound"> Bunyi notifikasi</label></div>
+   <div class="row"><button class="bt p" data-a="saveset">Simpan</button><button class="bt" data-a="export">Export Data</button><button class="bt" data-a="import">Import Data</button>
+   <button class="bt r" data-a="clear">Hapus Pesanan Hari Ini</button><button class="bt" data-a="mode">Ganti Mode</button></div>
+   <input type="file" id="file" accept="application/json,.json" hidden></div></section>
+ </main>
+</div>
+<div id="disp" hidden></div><div id="modal" hidden></div><div id="toast" role="status"></div><div id="ticket"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+/* ===== KONFIGURASI: isi atau biarkan kosong lalu isi di layar awal ===== */
+const SB_URL='https://npmixlmzcjcwvoezhykb.supabase.co',SB_KEY='sb_publishable_GwSsfOMbQ9E5HfUuR_fOaQ_D7Szm3T7';   // pakai anon/publishable key SAJA, bukan service-role
+
+/* ===== util ===== */
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp=n=>'Rp'+String(Math.round(n||0)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const jkt=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Jakarta'});
+const hm=t=>new Date(t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}).replace('.',':');
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const LBL={menunggu:'Menunggu',diproses:'Diproses',siap:'Siap',selesai:'Selesai',dibatalkan:'Dibatalkan'};
+const itemsText=a=>a.map(i=>`${i.n} × ${i.q}`).join(', ');
+
+/* ===== konfigurasi lokal (preferensi perangkat) ===== */
+const LS='pentol.cfg.v1';
+const DEF={mode:'',queueId:'PENTOL-001',name:'Pentol & Gorengan',prefix:'A',start:1,prices:[3,4,5,6,7,8,9,10,11,12,13,14,15].map(x=>x*1000),
+ items:['Pentol','Tahu','Somay','Gorengan','Pentol Gede'],sauces:['Pedas','Sedang','Tidak Pedas','Saus','Kecap','Saus + Kecap'],kuahs:['Tanpa Kuah','Sedikit','Normal','Banyak'],
+ voice:true,sound:true,theme:'dark',url:'',key:''};
+let cfg=(()=>{try{return{...DEF,...JSON.parse(localStorage.getItem(LS)||'{}')}}catch(e){return{...DEF}}})();
+const saveCfg=()=>{try{localStorage.setItem(LS,JSON.stringify(cfg))}catch(e){}};
+
+/* ===== state ===== */
+let sb=null,ch=null,orders=[],stallName='',busy=false,view='order',connState='wait',lastKey='',wl=null,timer=null,rt=null;
+let D={price:0,qty:{},sauce:'',kuah:'',cid:uid()};
+const resetDraft=()=>{D={price:0,qty:{},sauce:'',kuah:'',cid:uid()}};
+
+/* ===== UI dasar ===== */
+function toast(m,k=''){const d=document.createElement('div');d.className='t '+k;d.textContent=m;$('#toast').append(d);setTimeout(()=>d.remove(),k==='err'?6000:2500)}
+function ask(title,body,okLabel,fn){const m=$('#modal');m.innerHTML=`<div class="box" role="dialog" aria-modal="true"><h2>${esc(title)}</h2>${body}<div class="row" style="margin:0"><button class="bt" id="m-no" style="flex:1">Batal</button><button class="bt p" id="m-ok" style="flex:1">${esc(okLabel)}</button></div></div>`;m.hidden=false;
+ const close=()=>{m.hidden=true;m.innerHTML=''};$('#m-no').onclick=close;$('#m-ok').onclick=()=>{if(fn()!==false)close()};const i=m.querySelector('input');(i||$('#m-ok')).focus()}
+const CT={ok:'Terhubung',wait:'Menghubungkan...',bad:'Terputus — mencoba menghubungkan kembali'};
+function setConn(s){connState=s;document.querySelectorAll('.conn').forEach(e=>{e.className='conn '+s;e.textContent=CT[s]})}
+const connH=()=>`<span class="conn ${connState}">${CT[connState]}</span>`;
+
+/* ===== suara ===== */
+let actx=null;
+function announce(o){if(cfg.sound){try{const a=actx||(actx=new(window.AudioContext||window.webkitAudioContext)());[880,1175].forEach((f,i)=>{const s=a.createOscillator(),g=a.createGain(),t=a.currentTime+i*.25;s.frequency.value=f;s.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.22);s.start(t);s.stop(t+.25)})}catch(e){}}
+ if(cfg.voice&&'speechSynthesis' in window){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`Pesanan ${o.code.split('').join(' ')}, silakan diambil.`);u.lang='id-ID';speechSynthesis.speak(u)}catch(e){}}}
+
+/* ===== Supabase: data & realtime ===== */
+function initSb(){const u=SB_URL||cfg.url,k=SB_KEY||cfg.key;if(!u||!k||!window.supabase)return false;try{sb=supabase.createClient(u,k);return true}catch(e){return false}}
+async function rpc(fn,args){let r;try{r=await sb.rpc(fn,args)}catch(e){throw new Error('Tidak ada koneksi')}if(r.error)throw new Error(r.error.message||'Server menolak permintaan');return r.data}
+async function refresh(){try{const{data,error}=await sb.from('orders').select('*').eq('queue_id',cfg.queueId).eq('day',jkt()).order('num');if(error)throw error;orders=data;
+ if(cfg.mode==='display'){const r=await sb.from('stalls').select('name').eq('queue_id',cfg.queueId).maybeSingle();if(r.data)stallName=r.data.name}
+ setConn(ch&&ch.state==='joined'?'ok':'wait');renderAll()}catch(e){setConn('bad')}}
+const sched=()=>{clearTimeout(rt);rt=setTimeout(refresh,120)};
+function connect(){if(ch)sb.removeChannel(ch);setConn('wait');const f='queue_id=eq.'+cfg.queueId;
+ const mine=ch=sb.channel('q-'+cfg.queueId).on('postgres_changes',{event:'*',schema:'public',table:'orders',filter:f},sched).on('postgres_changes',{event:'*',schema:'public',table:'stalls',filter:f},sched)
+ .subscribe(s=>{if(mine!==ch)return;if(s==='SUBSCRIBED'){setConn('ok');refresh()}else if(s==='CLOSED'||s==='CHANNEL_ERROR'||s==='TIMED_OUT')setConn('bad')})}
+function merge(o){const i=orders.findIndex(x=>x.id===o.id);if(i>=0)orders[i]=o;else if(o.day===jkt())orders.push(o);orders.sort((a,b)=>a.num-b.num)}
+async function guard(fn){if(busy)return;busy=true;if(cfg.mode==='seller')rSum();try{await fn()}catch(e){toast('Gagal: '+e.message,'err')}finally{busy=false;renderAll()}}
+
+/* ===== logika pesanan ===== */
+const nextCode=()=>cfg.prefix+String(Math.max(cfg.start-1,...orders.map(o=>o.num))+1).padStart(3,'0');
+const draftItems=()=>cfg.items.filter(n=>D.qty[n]>0).map(n=>({n,q:D.qty[n]}));
+const calledSiap=()=>orders.filter(o=>o.status==='siap').sort((a,b)=>new Date(b.called_at)-new Date(a.called_at));
+const current=()=>calledSiap()[0]||orders.find(o=>o.status==='diproses')||null;
+async function submit(){const items=draftItems();if(!D.price)return toast('Pilih harga dulu','err');if(!items.length)return toast('Pilih minimal satu item','err');
+ await guard(async()=>{const o=await rpc('create_order',{p_queue:cfg.queueId,p_prefix:cfg.prefix,p_start:cfg.start,p_items:items,p_sauce:D.sauce||null,p_kuah:D.kuah||null,p_total:D.price,p_client:D.cid});
+  merge(o);resetDraft();toast('Pesanan '+o.code+' dibuat','ok')})}
+async function setSt(id,st){await guard(async()=>{const o=await rpc('set_status',{p_id:id,p_status:st});merge(o);if(st==='siap')announce(o)})}
+const callNext=()=>{const o=orders.find(x=>x.status==='menunggu'||x.status==='diproses');if(!o)return toast('Tidak ada antrian menunggu','err');setSt(o.id,'siap')};
+
+/* ===== render penjual ===== */
+const BT={menunggu:o=>[['diproses','Proses',''],['siap','Panggil','g'],['dibatalkan','Batal','r']],diproses:o=>[['siap','Siap','g'],['dibatalkan','Batal','r']],siap:o=>[['siap','Panggil Lagi',''],['selesai','Selesai','p']],selesai:o=>[],dibatalkan:o=>[]};
+const qCard=o=>`<div class="oc s-${o.status}"><div class="ocl"><b class="code">${esc(o.code)}</b><span class="bd b-${o.status}">${LBL[o.status]}</span><small>${hm(o.created_at)}</small><span class="tot">${rp(o.total)}</span></div>
+<div class="det">${esc(itemsText(o.items))}${o.sauce?' · '+esc(o.sauce):''}${o.kuah?' · Kuah: '+esc(o.kuah):''}</div><div class="acts">${BT[o.status](o).map(b=>`<button class="bt ${b[2]}" data-a="st" data-id="${o.id}" data-v="${b[0]}">${b[1]}</button>`).join('')}<button class="bt" data-a="print" data-id="${o.id}" aria-label="Cetak ${esc(o.code)}">🖨</button></div></div>`;
+function rCur(){const c=current(),w=orders.filter(o=>o.status==='menunggu').length;
+ $('#cur').innerHTML=`<div class="card"><div><div class="cl">${c&&c.status==='siap'?'PESANAN SAAT INI':'SEDANG DIKERJAKAN'}</div><div class="cn">${c?esc(c.code):'—'}</div>${c?`<span class="bd b-${c.status}">${LBL[c.status]}</span>`:''}</div>
+ <div class="acts" style="flex:1;justify-content:flex-end"><button class="bt p" style="min-height:58px" data-a="next">Panggil Berikutnya${w?' ('+w+')':''}</button>${c&&c.status==='siap'?`<button class="bt" style="min-height:58px" data-a="st" data-id="${c.id}" data-v="siap">Panggil Lagi</button><button class="bt g" style="min-height:58px" data-a="st" data-id="${c.id}" data-v="selesai">Selesai</button>`:''}</div></div>`}
+function rQueue(){const l=orders.filter(o=>['menunggu','diproses','siap'].includes(o.status)),h=l.length?l.map(qCard).join(''):'<p style="text-align:center;color:var(--mut)">Belum ada antrian aktif.</p>';
+ $('#ql').innerHTML=`<h3>Antrian (${l.length})</h3>`+h;$('#t-queue').innerHTML=h}
+function rBuilder(){const chips=(arr,sel,a)=>arr.map((n,i)=>`<button class="chip ${sel===n?'on':''}" data-a="${a}" data-v="${i}">${esc(n)}</button>`).join('');
+ $('#bld').innerHTML=`<h3>Harga</h3><div class="grid4">${cfg.prices.map(p=>`<button class="chip ${D.price===p?'on':''}" data-a="price" data-v="${p}">${rp(p)}</button>`).join('')}<button class="chip ${D.price&&!cfg.prices.includes(D.price)?'on':''}" data-a="custom">Harga Custom</button></div>
+ <div class="total">TOTAL: ${rp(D.price)}</div><h3>Item</h3>${cfg.items.map((n,i)=>`<div class="irow"><span>${esc(n)}</span><button class="qb" data-a="dec" data-v="${i}" aria-label="Kurangi ${esc(n)}">−</button><b>${D.qty[n]||0}</b><button class="qb p" data-a="inc" data-v="${i}" aria-label="Tambah ${esc(n)}">+</button></div>`).join('')}
+ <h3>Saus</h3><div class="grid3">${chips(cfg.sauces,D.sauce,'sauce')}</div><h3>Kuah</h3><div class="grid3">${chips(cfg.kuahs,D.kuah,'kuah')}</div>`}
+function rSum(){const it=draftItems(),ok=D.price>0&&it.length>0;
+ $('#sum').innerHTML=`<div class="sh">ORDER #${nextCode()}</div><div class="sd"><b>Item:</b>${it.map(i=>`<div>• ${esc(i.n)} × ${i.q}</div>`).join('')||'<div style="color:var(--mut)">Belum ada item</div>'}<div><b>Saus:</b> ${esc(D.sauce||'-')}</div><div><b>Kuah:</b> ${esc(D.kuah||'-')}</div></div>
+ <span class="sc">${it.reduce((a,i)=>a+i.q,0)} item</span><div class="stot">${rp(D.price)}</div><button class="big-btn" data-a="submit" ${ok&&!busy?'':'disabled'}>${busy?'Mengirim…':'BUAT PESANAN'}</button><button class="bt lnk" data-a="reset">Reset</button>`}
+function rRecap(){const ok=orders.filter(o=>o.status!=='dibatalkan'),cnt={};ok.forEach(o=>o.items.forEach(i=>cnt[i.n]=(cnt[i.n]||0)+i.q));const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0],n=s=>orders.filter(o=>s.includes(o.status)).length;
+ const c=[['Total pesanan',orders.length],['Pendapatan',rp(ok.reduce((a,o)=>a+o.total,0))],['Menunggu',n(['menunggu','diproses'])],['Selesai',n(['selesai'])],['Dibatalkan',n(['dibatalkan'])],['Terlaris',top?`${esc(top[0])} (${top[1]})`:'—']];
+ $('#stats').innerHTML=c.map(x=>`<div><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+ const q=$('#srch').value.trim().toUpperCase(),l=orders.filter(o=>!q||o.code.includes(q)).slice().reverse();
+ $('#hist').innerHTML=l.length?l.map(o=>`<div class="hr"><b>${esc(o.code)}</b><span class="d">${esc(itemsText(o.items))}${o.sauce?' · '+esc(o.sauce):''}${o.kuah?' · '+esc(o.kuah):''}</span><span>${rp(o.total)}</span><small>${hm(o.created_at)}</small><span class="bd b-${o.status}">${LBL[o.status]}</span></div>`).join(''):'<p style="text-align:center;color:var(--mut)">Tidak ada pesanan.</p>'}
+function rSet(){$('#s-name').value=cfg.name;$('#s-q').value=cfg.queueId;$('#s-prefix').value=cfg.prefix;$('#s-start').value=cfg.start;$('#s-prices').value=cfg.prices.join(',');$('#s-items').value=cfg.items.join(', ');$('#s-sauce').value=cfg.sauces.join(', ');$('#s-kuah').value=cfg.kuahs.join(', ');$('#s-voice').checked=cfg.voice;$('#s-sound').checked=cfg.sound}
+function show(t){view=t;if(t==='queue'&&innerWidth>=1000)view=t='order';['order','queue','recap','set'].forEach(k=>$('#t-'+k).hidden=k!==t);$('#cur').hidden=t==='recap'||t==='set';$('#sum').hidden=t!=='order';
+ document.querySelectorAll('#tabs button').forEach(b=>b.dataset.t===t?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));if(t==='set')rSet();renderAll()}
+
+/* ===== display ===== */
+function rDisplay(){const siap=calledSiap(),c=siap[0]||null,key=c?c.id+c.called_at+c.recall_n:'',pop=key!==lastKey&&lastKey!==''?'pop':'';lastKey=key;
+ const rec=orders.filter(o=>o.called_at&&o.status!=='dibatalkan'&&(!c||o.id!==c.id)).sort((a,b)=>new Date(b.called_at)-new Date(a.called_at)).slice(0,3).map(o=>o.code),
+ nx=orders.filter(o=>(o.status==='menunggu'||o.status==='diproses')&&(!c||o.id!==c.id)).slice(0,4).map(o=>o.code),cs=a=>a.length?a.map(x=>`<span>${esc(x)}</span>`).join(''):'<span style="opacity:.4">—</span>';
+ const d=$('#disp');d.className=cfg.theme;
+ d.innerHTML=`<div class="dtop"><span>${esc(stallName||cfg.name)}</span>${connH()}</div><div class="dmain ${pop}"><div class="dlbl">${c?'PESANAN SIAP':'MOHON MENUNGGU'}</div><div class="dnum">${c?esc(c.code):'—'}</div><div class="dsub">${c?'Silakan ambil pesanan':'Pesanan sedang disiapkan'}</div></div>
+ <div class="dl"><div><small>Sudah dipanggil</small><div class="codes">${cs(rec)}</div></div><div><small>Antrian berikutnya</small><div class="codes">${cs(nx)}</div></div></div>`}
+async function wake(){try{if('wakeLock' in navigator&&!wl){wl=await navigator.wakeLock.request('screen');wl.onrelease=()=>{wl=null}}}catch(e){}}
+function dmenu(){let m=$('#dmenu');if(m)return;m=document.createElement('div');m.id='dmenu';m.innerHTML='<button class="bt" data-a="theme">🌓 Tema</button><button class="bt" data-a="mode">Ganti Mode</button>';document.body.append(m);setTimeout(()=>m.remove(),4000)}
+
+/* ===== render & event ===== */
+function renderAll(){if(cfg.mode==='display')return rDisplay();if(cfg.mode!=='seller')return;$('#sname').textContent=cfg.name;rCur();rQueue();rBuilder();rSum();if(view==='recap')rRecap()}
+const A={
+ boot(v){const q=$('#b-q').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'');if(!q)return toast('Isi Queue ID','err');cfg.queueId=q;cfg.mode=v;
+  if(!SB_URL){cfg.url=$('#b-u').value.trim()||cfg.url;cfg.key=$('#b-k').value.trim()||cfg.key}saveCfg();start()},
+ price(v){D.price=+v;rBuilder();rSum()},
+ custom(){ask('Harga Custom','<input id="m-p" type="number" inputmode="numeric" min="500" step="500" placeholder="Rupiah, mis. 8500">','Pakai',()=>{const v=Math.round(+$('#m-p').value);if(!(v>=100&&v<=1e6)){toast('Harga tidak valid','err');return false}D.price=v;rBuilder();rSum()})},
+ inc(i){const n=cfg.items[i];D.qty[n]=Math.min(99,(D.qty[n]||0)+1);rBuilder();rSum()},dec(i){const n=cfg.items[i];D.qty[n]=Math.max(0,(D.qty[n]||0)-1);rBuilder();rSum()},
+ sauce(i){const v=cfg.sauces[i];D.sauce=D.sauce===v?'':v;rBuilder();rSum()},kuah(i){const v=cfg.kuahs[i];D.kuah=D.kuah===v?'':v;rBuilder();rSum()},
+ reset(){resetDraft();rBuilder();rSum()},submit,next:callNext,
+ st(v,b){const id=b.dataset.id;if(v==='dibatalkan')return ask('Batalkan pesanan?',`<p>${esc((orders.find(o=>o.id===id)||{}).code||'')} akan dibatalkan.</p>`,'Ya, batalkan',()=>{setSt(id,v)});setSt(id,v)},
+ print(v,b){const o=orders.find(x=>x.id===b.dataset.id);if(!o)return;$('#ticket').innerHTML=`<div class="c">${esc(cfg.name)}</div><div class="c tq">ORDER ${esc(o.code)}</div>${o.items.map(i=>`<div>${esc(i.n)} × ${i.q}</div>`).join('')}<div>Saus: ${esc(o.sauce||'-')}</div><div>Kuah: ${esc(o.kuah||'-')}</div><div class="c">Total: ${rp(o.total)}</div><div class="c">${hm(o.created_at)}</div>`;setTimeout(()=>window.print(),60)},
+ theme(){cfg.theme=cfg.theme==='dark'?'light':'dark';saveCfg();rDisplay()},
+ mode(){cfg.mode='';saveCfg();location.reload()},
+ saveset(){const L=id=>$(id).value.split(',').map(s=>s.trim()).filter(Boolean),pr=L('#s-prices').map(Number),pf=$('#s-prefix').value.trim().toUpperCase(),st=Math.floor(+$('#s-start').value),q=$('#s-q').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'');
+  if(!pr.length||pr.some(x=>!(x>=100)))return toast('Harga harus angka (≥100), pisah koma','err');if(!/^[A-Z]{1,3}$/.test(pf))return toast('Prefix 1–3 huruf','err');if(!(st>=1))return toast('Nomor awal minimal 1','err');if(!q)return toast('Queue ID wajib diisi','err');
+  const it=L('#s-items'),sa=L('#s-sauce'),ku=L('#s-kuah');if(!it.length)return toast('Isi minimal 1 item','err');
+  const qch=q!==cfg.queueId;Object.assign(cfg,{name:$('#s-name').value.trim()||cfg.name,queueId:q,prefix:pf,start:st,prices:pr,items:it,sauces:sa,kuahs:ku,voice:$('#s-voice').checked,sound:$('#s-sound').checked});saveCfg();resetDraft();
+  guard(async()=>{await rpc('upsert_stall',{p_queue:cfg.queueId,p_name:cfg.name});if(qch){orders=[];connect()}toast('Setelan disimpan','ok')})},
+ async export(){await guard(async()=>{const{data,error}=await sb.from('orders').select('*').eq('queue_id',cfg.queueId).order('created_at').limit(5000);if(error)throw error;
+  const{url,key,mode,...s}=cfg,a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({queueId:cfg.queueId,settings:s,orders:data},null,1)],{type:'application/json'}));a.download=`pentol-${jkt()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})},
+ import(){$('#file').click()},
+ clear(){ask('Hapus pesanan hari ini?','<p>Semua pesanan hari ini dihapus permanen untuk kedua perangkat. Riwayat hari lain tetap aman.</p>','Hapus',()=>{guard(async()=>{await rpc('clear_day',{p_queue:cfg.queueId});orders=[];toast('Pesanan hari ini dihapus','ok')})})}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&!b.disabled&&A[b.dataset.a]){A[b.dataset.a](b.dataset.v,b);return}const t=e.target.closest('#tabs button');if(t)return show(t.dataset.t);if(cfg.mode==='display'&&e.target.closest('#disp'))dmenu()});
+$('#srch').oninput=rRecap;
+$('#file').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const r=new FileReader();r.onerror=()=>toast('File tidak bisa dibaca','err');
+ r.onload=()=>{let o;try{o=JSON.parse(r.result)}catch(x){return toast('File bukan JSON yang valid','err')}const arr=Array.isArray(o)?o:o&&o.orders;if(!Array.isArray(arr))return toast('Data "orders" tidak ditemukan','err');
+  const S=Object.keys(LBL),rows=arr.filter(x=>x&&x.num>0&&x.code&&/^\d{4}-\d\d-\d\d$/.test(x.day)&&S.includes(x.status)&&Array.isArray(x.items)).map(x=>({day:x.day,num:+x.num,code:String(x.code),items:x.items.map(i=>({n:String(i.n),q:+i.q||1})),sauce:x.sauce||null,kuah:x.kuah||null,total:+x.total||0,status:x.status,client_id:String(x.client_id||x.id||uid()),created_at:x.created_at,called_at:x.called_at||null}));
+  if(!rows.length)return toast('Tidak ada data valid di file','err');
+  ask('Import data?',`<p>${rows.length} pesanan valid (${arr.length-rows.length} dilewati). Data yang nomornya sudah ada tidak ditimpa.</p>`,'Import',()=>{guard(async()=>{const n=await rpc('import_orders',{p_queue:cfg.queueId,p_rows:rows});
+   if(o.settings&&typeof o.settings==='object'){['name','prefix','start','prices','items','sauces','kuahs'].forEach(k=>{if(typeof o.settings[k]===typeof DEF[k]&&o.settings[k]!=null)cfg[k]=o.settings[k]});saveCfg()}toast(`${n} pesanan diimpor`,'ok');await refresh()})})};r.readAsText(f)};
+
+/* ===== start ===== */
+async function start(){clearInterval(timer);
+ if(!initSb()){$('#boot').hidden=false;$('#b-q').value=cfg.queueId;$('#b-u').value=cfg.url;$('#b-k').value=cfg.key;$('#b-cred').hidden=!!SB_URL;if(cfg.mode)toast('Isi URL & anon key Supabase','err');cfg.mode='';return}
+ $('#boot').hidden=true;$('#seller').hidden=cfg.mode!=='seller';$('#disp').hidden=cfg.mode!=='display';
+ if(cfg.mode==='seller'){show('order');try{await rpc('upsert_stall',{p_queue:cfg.queueId,p_name:cfg.name})}catch(e){toast('Gagal: '+e.message,'err')}}else{wake();rDisplay()}
+ connect();timer=setInterval(refresh,20000)}
+window.addEventListener('online',()=>refresh());window.addEventListener('offline',()=>setConn('bad'));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sb){if(cfg.mode==='display')wake();refresh()}});
+window.addEventListener('resize',()=>{if(cfg.mode==='seller'&&view==='queue'&&innerWidth>=1000)show('order')});
+if(cfg.mode==='seller'||cfg.mode==='display')start();else{$('#boot').hidden=false;$('#b-q').value=cfg.queueId;$('#b-u').value=cfg.url;$('#b-k').value=cfg.key;$('#b-cred').hidden=!!SB_URL}
+</script>
+</body>
+</html>
